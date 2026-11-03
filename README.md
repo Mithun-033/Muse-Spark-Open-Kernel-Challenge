@@ -2,7 +2,7 @@
 
 High-performance GPU kernel engineering for the **Meta Muse Spark Open Dense Projections** challenge (`muse_bf16_proj`) on 8× NVIDIA H200 SXM GPUs (Hopper SM90a, 132 SMs, 4.8 TB/s HBM3e).
 
-My final submission achieves a peak **1.255× geometric speedup** (3,847.9 µs vs. SGLang baseline 4,830.8 µs) across all 30 benchmark shapes under CUDA Graph replay, passing all 9/9 correctness tests with zero precision regressions.
+My final submission achieves a peak **1.255× speedup** (3,847.9 µs vs. SGLang baseline 4,830.8 µs) across all 30 benchmark shapes under CUDA Graph replay, passing all 9/9 numerical correctness tests with zero precision regressions.
 
 ---
 
@@ -100,7 +100,7 @@ My performance evolution followed a systematic, hypothesis-driven engineering me
   - I decomposed the FP32 weight matrix into two BF16 matrices: $W_{\text{hi}} = \text{bfloat16}(W)$ and $W_{\text{lo}} = \text{bfloat16}(W - \text{float32}(W_{\text{hi}}))$, computing $\text{out} = x W_{\text{hi}}^T + x W_{\text{lo}}^T$.
   - For large $M \ge 128$, I avoided dynamic `torch.cat((x, x))` memory allocations by pre-stacking weights into $[8192, 512]$ during `prepare()`.
 * **Router PTX Cache-Bypass (`routertail_small`)**:
-  - Router weights are used once per token generation step. Caching them in L2 evicts critical KV cache lines and activations.
+  - Router weights are used once per token generation step. Caching them in L2 evicts critical L2 cache lines and activations.
   - I created an inlined CUDA kernel utilizing PTX `ld.global.nc` cache-bypass loads and warp shuffle reductions.
   - Delivered massive router speedups: **2.19×** on $M=1$, **3.48×** on $M=16$, **2.89×** on $M=32$, and a **6.47× on $M=8$** (4.1 µs vs. 26.2 µs)!
   - Total latency dropped to **3,847.9 µs**, securing my all-time peak of **1.255×**.
@@ -180,7 +180,6 @@ muse_bf16_proj/
 ├── checks.py           # Verification harness & probe rows
 ├── benchmarks.py       # Performance benchmarking harness
 ├── TASK.md             # Challenge specification & bounds
-├── AGENTS.md           # Instructions for AI coding agents
 ├── README.md           # This comprehensive documentation
 └── profiles/           # Profiling outputs (.txt and .json) from evaluator runs
 ```
