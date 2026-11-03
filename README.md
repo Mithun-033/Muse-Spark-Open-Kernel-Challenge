@@ -1,4 +1,4 @@
-# Meta Muse Open Kernel Challenge (OKC) — 1.255× Faster Dense Projections on NVIDIA H200
+# Meta Muse Open Kernel Challenge (OKC) - 1.255× Faster Dense Projections on NVIDIA H200
 
 High-performance GPU kernel engineering for the **Meta Muse Spark Open Dense Projections** challenge (`muse_bf16_proj`) on 8× NVIDIA H200 SXM GPUs (Hopper SM90a, 132 SMs, 4.8 TB/s HBM3e).
 
